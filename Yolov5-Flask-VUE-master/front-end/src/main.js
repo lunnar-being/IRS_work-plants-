@@ -3,6 +3,7 @@
 import Vue from 'vue'
 import App from './App'
 import VueRouter from 'vue-router'
+import InstantSearch from 'vue-instantsearch'
 import axios from 'axios'
 import Element from 'element-ui'
 import echarts from "echarts";
@@ -13,6 +14,7 @@ import '../src/assets/style.css'
 import './theme/index.css'
 
 Vue.use(Element)
+Vue.use(InstantSearch)
 Vue.config.productionTip = false
 Vue.use(VueRouter)
 Vue.prototype.$http = axios
