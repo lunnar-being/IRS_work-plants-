@@ -2,10 +2,11 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
 import App from './App'
-import VueRouter from 'vue-router'
 import InstantSearch from 'vue-instantsearch'
 import axios from 'axios'
 import Element from 'element-ui'
+import './plugins/ant-design-vue.js'
+import router from "./plugins/router"
 import echarts from "echarts";
 
 Vue.prototype.$echarts = echarts;
@@ -16,17 +17,8 @@ import './theme/index.css'
 Vue.use(Element)
 Vue.use(InstantSearch)
 Vue.config.productionTip = false
-Vue.use(VueRouter)
 Vue.prototype.$http = axios
 
-const router = new VueRouter({
-    routes: [
-        {path: "/App", component: App, meta: {title: "眼疾辅助诊断系统"},},
-    ],
-    mode: "history"
-})
-
-// // 全局注册组件
 Vue.component("App", App);
 
 /* eslint-disable no-new */
@@ -34,4 +26,4 @@ new Vue({
     el: '#app',
     router,
     render: h => h(App)
-})
+}).$mount('#app')
