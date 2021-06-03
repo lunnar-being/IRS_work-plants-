@@ -1,7 +1,7 @@
 <template>
 <div>
   <a-rate v-model="value" />
-  <el-calendar v-model="dates"></el-calendar>
+  <!-- <el-calendar v-model="dates"></el-calendar> -->
 </div>
 </template>
 <script>
