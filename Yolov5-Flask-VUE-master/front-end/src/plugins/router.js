@@ -60,6 +60,7 @@ const routes = [{
     name:'detail',
     component:()=> import('@/views/detail')
 },
+
 {
     path:'/index',
     name:'index',
@@ -72,26 +73,31 @@ const routes = [{
 },
 {
     path:'',
-    redirect:'/detail'
+    redirect:'/store/index'
 },
 {
     path: '/store',
     component: () => import('@/views/layout/Layout'),
     children: [
     {
-        path: 'bestSeller',
-        name: 'bestSeller',
-        component: () => import('@/views/bestSeller')
+        path: 'category',
+        name: 'category',
+        component: () => import('@/views/category')
     },
     {
-        path:'specials',
-        name:'specials',
-        component:()=>import('@/views/specials')
+        path:'advanced',
+        name:'advanced',
+        component:()=>import('@/views/advanced')
     },
     {
-        path:'dynamic',
-        name:'dynamic',
-        component:()=>import('@/views/dynamic')
+        path:'result',
+        name:'result',
+        component:()=>import('@/views/result')
+    },
+    {
+        path:'pictures',
+        name:'pictures',
+        component:()=>import('@/views/pictures')
     },
     {
         path:'contact',
@@ -110,9 +116,9 @@ const routes = [{
     }
     ,
     {
-        path:'help',
-        name:'help',
-        component:()=>import('@/views/help')
+        path:'map',
+        name:'map',
+        component:()=>import('@/views/map')
     },
     {
         path:'center',
@@ -128,6 +134,16 @@ const routes = [{
         path:'a-steps',
         name:'a-steps',
         component:()=>import('@/views/a-steps')
+    },
+    {
+        path:'upload',
+        name:'upload',
+        component:()=>import('@/views/upload')
+    },
+    {
+        path:'features',
+        name:'features',
+        component:()=>import('@/views/features')
     },
     ]
 }

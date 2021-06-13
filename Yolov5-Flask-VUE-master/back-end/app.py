@@ -1,90 +1,111 @@
-import datetime
-import logging as rel_log
+from flask import Flask, request
+from flask_cors import CORS
+import requests
+import base64
+# -*- coding: utf-8 -*-
+# import pymysql
 import os
-import shutil
-from datetime import timedelta
-from flask import *
-from processor.AIDetector_pytorch import Detector
-
-import core.main
-
-UPLOAD_FOLDER = r'./uploads'
-
-ALLOWED_EXTENSIONS = set(['png', 'jpg'])
+import json
+#from flask_cors import *
+os.environ['NLS_LANG'] = 'SIMPLIFIED CHINESE_CHINA.UTF8'
 app = Flask(__name__)
-app.secret_key = 'secret!'
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
-werkzeug_logger = rel_log.getLogger('werkzeug')
-werkzeug_logger.setLevel(rel_log.ERROR)
-
-# 解决缓存刷新问题
-app.config['SEND_FILE_MAX_AGE_DEFAULT'] = timedelta(seconds=1)
-
-
-# 添加header解决跨域
-@app.after_request
-def after_request(response):
-    response.headers['Access-Control-Allow-Origin'] = '*'
-    response.headers['Access-Control-Allow-Credentials'] = 'true'
-    response.headers['Access-Control-Allow-Methods'] = 'POST'
-    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, X-Requested-With'
-    return response
-
-
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
+CORS(app, supports_credentials=True)
+idList = [1]
 
 
 @app.route('/')
-def hello_world():
-    return redirect(url_for('static', filename='./index.html'))
+# @app.route('/transId')
+def getId():
+
+    a = request.args.get('id')
+    idList.append(a)
+    return str(idList[-1])
 
 
-@app.route('/upload', methods=['GET', 'POST'])
-def upload_file():
-    file = request.files['file']
-    print(datetime.datetime.now(), file.filename)
-    if file and allowed_file(file.filename):
-        src_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
-        file.save(src_path)
-        shutil.copy(src_path, './tmp/ct')
-        image_path = os.path.join('./tmp/ct', file.filename)
-        pid, image_info = core.main.c_main(
-            image_path, current_app.model, file.filename.rsplit('.', 1)[1])
-        return jsonify({'status': 1,
-                        'image_url': 'http://127.0.0.1:5003/tmp/ct/' + pid,
-                        'draw_url': 'http://127.0.0.1:5003/tmp/draw/' + pid,
-                        'image_info': image_info})
+@app.route('/image')
+def getImage():
+    if request.method == 'POST':
+        f = request.files['file']
+        print(type(f))
+        request_url = "https://aip.baidubce.com/rest/2.0/image-classify/v1/plant"
 
-    return jsonify({'status': 0})
+    # 二进制方式打开图片文件
+        f = open('C:\\Users\\19000\Pictures\\flower1.jpg', 'rb')
+        img = base64.b64encode(f.read())
 
-
-@app.route("/download", methods=['GET'])
-def download_file():
-    # 需要知道2个参数, 第1个参数是本地目录的path, 第2个参数是文件名(带扩展名)
-    return send_from_directory('data', 'testfile.zip', as_attachment=True)
-
-
-# show photo
-@app.route('/tmp/<path:file>', methods=['GET'])
-def show_photo(file):
-    if request.method == 'GET':
-        if not file is None:
-            image_data = open(f'tmp/{file}', "rb").read()
-            response = make_response(image_data)
-            response.headers['Content-Type'] = 'image/png'
-            return response
-
-
+        params = {"image": img}
+        access_token = '24.56650b507916d366d0eea0e3cc1a1fa6.2592000.1625794968.282335-23974442'
+        request_url = request_url + "?access_token=" + access_token
+        headers = {'content-type': 'application/x-www-form-urlencoded'}
+        response = requests.post(request_url, data=params, headers=headers)
+        if response:
+            print(response.json())
+        return ("shoudao")
+# @app.route('/info')
+# def getcontent():
+#     db = pymysql.connect(host='175.24.114.16', port=3306, user='test', passwd='20010914', db='test', charset='utf8')
+#     cur = db.cursor()
+#     spid=idList[-1]
+#     sql = "SELECT speach_id,title,master,classification,spot,time,sp_dept,label,master_info,sp_info,pic_url FROM `speach` where speach_id=%s;"
+#     cur.execute(sql,(spid))
+#     data = cur.fetchall()
+#     # print(data)
+#     para = []
+#     for i in data:
+#         text = {'id':i[0],'title':i[1],'master':i[2],'classification':i[3],'spot':i[4],'time':i[5],'sp_dept':i[6],'label':i[7],'master_info':i[8],'sp_info':i[9],'pic_url':i[10]}
+#         # print(text)
+#         para.append(text)
+#     return json.dumps(para, ensure_ascii=False, indent=4)
+# favorList=[]
+# @app.route('/favor')
+# def addfavor():
+#     a=request.args.get('spid')
+#     favorList.append(a)
+#     return str(favorList[-1])
+# @app.route('/favorite')
+# def getfavorite():
+#     db = pymysql.connect(host='175.24.114.16', port=3306, user='test', passwd='20010914', db='test', charset='utf8')
+#     cur = db.cursor()
+#     if len(favorList)==0:
+#         return ''
+#     spid=favorList[-1]
+#     sql = "SELECT speach_id,title,master,classification,spot,time,sp_dept,label,master_info,sp_info,pic_url FROM `speach` where speach_id=%s;"
+#     cur.execute(sql,(spid))
+#     data = cur.fetchall()
+#     # print(data)
+#     para = []
+#     for i in data:
+#         text = {'id':i[0],'title':i[1],'master':i[2],'classification':i[3],'spot':i[4],'time':i[5],'sp_dept':i[6],'label':i[7],'master_info':i[8],'sp_info':i[9],'pic_url':i[10]}
+#         # print(text)
+#         para.append(text)
+#     return json.dumps(para, ensure_ascii=False, indent=4)
+# @app.route('/login')
+# def logincheck():
+#     flag=0
+#     db = pymysql.connect(host='175.24.114.16', port=3306, user='test', passwd='20010914', db='test', charset='utf8')
+#     cur = db.cursor()
+#     sid=request.args.get('sid')
+#     spassword=request.args.get('spassword')
+#     sql = "SELECT spassword FROM `student` where sid=%s"
+#     cur.execute(sql,(sid))
+#     data=cur.fetchall()
+#     if str(spassword)==data:
+#         flag=1
+#     for i in data:
+#         check={'password':i[0]}
+#     return json.dumps(check, ensure_ascii=False, indent=4)
 if __name__ == '__main__':
-    files = [
-        'uploads', 'tmp/ct', 'tmp/draw',
-        'tmp/image', 'tmp/mask', 'tmp/uploads'
-    ]
-    for ff in files:
-        if not os.path.exists(ff):
-            os.makedirs(ff)
-    with app.app_context():
-        current_app.model = Detector()
-    app.run(host='127.0.0.1', port=5003, debug=True)
+    app.run(host=('127.0.0.1'))
+
+request_url = "https://aip.baidubce.com/rest/2.0/image-classify/v1/plant"
+# 二进制方式打开图片文件
+f = open('C:\\Users\\19000\Pictures\\flower1.jpg', 'rb')
+img = base64.b64encode(f.read())
+
+params = {"image": img}
+access_token = '24.56650b507916d366d0eea0e3cc1a1fa6.2592000.1625794968.282335-23974442'
+request_url = request_url + "?access_token=" + access_token
+headers = {'content-type': 'application/x-www-form-urlencoded'}
+response = requests.post(request_url, data=params, headers=headers)
+if response:
+    print(response.json())

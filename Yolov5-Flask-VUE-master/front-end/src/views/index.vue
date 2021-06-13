@@ -1,220 +1,129 @@
 <template>
-    <div>
-        <a-breadcrumb separator="">
-            <a-breadcrumb-item>
-                当前位置：首页
-            </a-breadcrumb-item>
-        </a-breadcrumb>
-        <a-divider></a-divider>
-        <div>
-            全文检索：
-            <a-input-search v-model="keyword" style="margin-right:30px;width:300px;" placeholder="关键词/书名/作者" @search="handleSearchList" />
-            分类：
-            <a-select v-model="categoryName" default-value="全部" style="margin-right:30px;width: 250px" @change="handleCategoryChange">
-                <a-select-option :key="item" v-for="item in catagoryOptions" :value="item">
-                    {{item}}
-                </a-select-option>
-            </a-select>
-            排序:
-            <a-select v-model="sort" default-value="按出版时间排序" style="width: 250px" @change="handleSortChange">
-                <a-select-option :key="item" v-for="item in sortOptions" :value="item">
-                    {{item}}
-                </a-select-option>
-            </a-select>
+  <div>
+    <el-main class="content1">
+      <div class="search_box">
+        <div class="our_name">
+          <img
+            src="../../src/image/shumiao.png"
+            style="height: 25px; width: 25px"
+          />
+          &nbsp; 燕园草木识别与检索系统
         </div>
-        <div class="list">
-            <div class="bookList">
-                <ul>
-                    <li :key="book" v-for="book in list">
-                        <div class="cover">
-                            <img src="http://image12.bookschina.com/2013/20131223/s5835607.jpg" />
-                        </div>
-                        <div class="info">
-                            <h2 class="name">{{book.bookName}}</h2>
-                            <div class="otherInfo">
-                                <a-breadcrumb>
-                                    <a-breadcrumb-item>{{book.author}}</a-breadcrumb-item>
-                                    <a-breadcrumb-item>
-                                        {{book.publishDate | formatTime}}
-                                    </a-breadcrumb-item>
-                                    <a-breadcrumb-item>{{book.press}}</a-breadcrumb-item>
-                                </a-breadcrumb>
-                            </div>
-                            <div class="priceWrap">
-                                <span class="sellPrice">¥{{book.price}}</span>
-                            </div>
-                            <p class="desc">{{book.description}}</p>
-                            <div class="action">
-                                <el-button type="danger" round @click="handleAddCart($event)" :id="book.id">加入购物车</el-button>
-                            </div>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-            <a-pagination style="margin-top:15px;float:right;" v-model="pageNum" :page-size="10" :total="total" show-less-items @change="handleCurrentChange" />
+        <div class="bar1">
+          <form>
+            <input
+              type="text"
+              placeholder="请输入您要搜索的内容..."
+              v-model="keywords"
+            />
+            <button type="submit" @click="submit_key">
+              <img
+                src="../../src/image/sousuo.png"
+                style="height: 25px; width: 25px"
+              />
+            </button>
+          </form>
         </div>
-    </div>
+      </div>
+    </el-main>
+    
+  </div>
 </template>
+
 <script>
-
-// import { formatDate } from '@/utils/date.js'
-// import { searchBooks, addCart } from '@/api/index.js'
-// import { getCookie } from '@/utils/support'
 export default {
-    data() {
-        return {
-            keyword: '',
-            categoryName: '全部',
-            sort: '按出版时间排序',
-            list: [],
-            pageNum: 1,
-            total: 1,
-            sortOptions: ["按出版时间排序", "按销量排序", "按价格降序", "按价格升序", "按相关度排序"],
-            catagoryOptions: ['全部', '医学与生物学', '历史与考古', '哲学与宗教', '商业与经济', '地球与环境科学', '工程与应用科学', '数学、物理与化学', '新闻与传播', '法律、政治与政府', '社会科学', '艺术与建筑', '语言与文学', '音乐、舞蹈、戏剧与电影'],
-        }
+  data() {
+    return {
+      keywords: "",
+      
+    };
+  },
+  methods: {
+    submit_key() {
+      console.log(this.keywords);
+      this.$router.push('result')
     },
-    filters: {
-        formatTime(time) {
-            let date = new Date(time);
-            return formatDate(date, 'yyyy-MM-dd')
-        }
-    },
-    created() {
-        this.getList();
-    },
-    methods: {
-        getList() {
-            let keyword = this.keyword;
-            let categoryName = this.categoryName;
-            let pageNum = this.pageNum - 1;
-            let pageSize = 10;
-            let sortValue = 1;
-            if (this.sort == '按销量排序') {
-                sortValue = 2
-            } else if (this.sort == '按价格升序') {
-                sortValue = 3;
-            } else if (this.sort == '按价格降序') {
-                sortValue = 4
-            } else if (this.sort == '按相关度排序') {
-                sortValue = 5;
-            } else if (this.sort == '按出版时间排序') {
-                sortValue = 1;
-            }
-            searchBooks(keyword, categoryName, pageNum, pageSize, sortValue).then(response => {
-                this.list = response.data.content;
-                this.total = response.data.total;
-            });
-        },
-        handleSearchList() {
-            this.pageNum = 1;
-            this.getList();
-        },
-        handleCategoryChange(categoryName) {
-            this.categoryName = categoryName;
-            this.getList();
-        },
-        handleSortChange(sort) {
-            this.sort = sort;
-            this.getList();
-        },
-        handleCurrentChange(pageNum) {
-            this.pageNum = pageNum;
-            this.getList();
-        },
-        handleAddCart(e) {
-            let bookId = e.currentTarget.id;
-            let price = e.currentTarget.parentElement.previousElementSibling.previousElementSibling.firstElementChild.innerHTML.substr(1);
-            console.log("entrance1")
-            let username=getCookie('username');
-            addCart(username,bookId, price).then(response => {
-                this.$message.success({
-                    content: '加入购物车成功',
-                    duration: 3,
-                })
-            })
-        }
-    }
-}
+  },
+};
 </script>
-<style scope>
-.ant-breadcrumb {
-    font-size: 16px;
+<style>
+.header {
+  margin-bottom: 0 !important;
 }
-
-.ant-divider-horizontal {
-    margin-top: 16px !important;
-    margin-bottom: 16px !important;
+.content1 {
+  margin-top: 0 !important;
+  width: 120% !important;
+  position:relative;
+  top:-50px;
+  left:-110px
 }
-
-.list {
-    margin-top: 15px;
-    float: left;
+.el-main {
+  background-image: url("../../src/image/bg.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  background-position: center center;
+  background-attachment: fixed;
+  color: #333;
+  text-align: center;
+  height: 750px;
+  margin-top: 0 !important;
+  vertical-align: middle;
 }
-
-.bookList {
-    float: left;
+.search_box {
+  width: 1000px;
+  border: 2px solid #62ab8a;
+  border-radius: 5px;
+  margin: 0 auto;
+  position: relative;
+  top: 20%;
 }
-
-.bookList ul {
-    list-style: none;
-    margin: 0px;
+.our_name {
+  color: #ffffff;
+  font-size: 24px;
+  font-weight: 600;
+  background-color: #a3d0c3;
+  padding-top: 10px;
 }
-
-.bookList li {
-    float: left;
-    width: 100%;
-    border: 1px solid #e9e9e9;
-    padding: 20px 30px 20px 20px;
-    border-bottom: 1px solid #e9e9e9;
+form {
+  position: relative;
+  width: 700px;
+  height: 200px;
+  margin: 0 auto;
 }
-
-.bookList li .info h2 {
-    height: 18px;
-    overflow: hidden;
-    font-weight: normal;
-    font-size: 14px;
-    line-height: 16px;
+input,
+button {
+  border: none;
+  outline: none;
 }
-
-.bookList li .info .otherInfo {
-    margin-top: 6px;
-    height: 26px;
-    overflow: hidden;
-    line-height: 26px;
+.bar1 {
+  background: #a3d0c3;
 }
-
-.bookList li .info .priceWrap {
-    height: 30px;
-    line-height: 30px;
-    vertical-align: bottom;
+.bar1 input {
+  border: 2px solid #7ba7ab;
+  border-radius: 5px;
+  color: #9e9c9c;
+  width: 100%;
+  height: 50px;
+  padding-left: 13px;
+  margin-top: 50px;
 }
-
-.bookList li .info .priceWrap span {
-    font-size: 18px;
-    color: #e60000;
-    margin-right: 10px;
-    font-family: 'Microsoft YaHei';
-}
-
-.bookList li .info .desc {
-    line-height: 22px;
-    height: 44px;
-    overflow: hidden;
-    color: #666666;
-    margin-top: 10px;
-}
-
-.bookList li .info .action {
-    overflow: hidden;
-    margin-top: 10px;
-}
-
-.bookList .cover {
-    height: 200px;
-    width: 200px;
-    float: left;
-    display: inline;
-    margin-right: 20px;
-    text-align: center;
+.bar1 button {
+  top: 0;
+  right: 0;
+  background: #7ba7ab;
+  border-radius: 0 5px 5px 0;
+  height: 50px;
+  width: 50px;
+  cursor: pointer;
+  position: absolute;
+  margin-top: 50px;
 }
 </style>
+
+
+
+
+
+  
+  
+

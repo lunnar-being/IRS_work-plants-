@@ -5,9 +5,9 @@
                 <a-affix :offset-top="0">
                     <div class="topBar">
                         <div class="flex-spacer"></div>
-                        <div style="width:33%"><a target="_blank" href="https://github.com/PKUcoldkeyboard/database-final">This project is open source, you can learn more about our project in Github.</a>
-                        </div>
-                        <div class="webTool">
+                        <!-- <div style="width:33%"><a target="_blank" href="https://github.com/PKUcoldkeyboard/database-final">This project is open source, you can learn more about our project in Github.</a>
+                        </div> -->
+                        <!-- <div class="webTool">
                             <router-link to="/store/cart">
                                 <a-icon type="shopping-cart" />
                                 购物车
@@ -15,12 +15,12 @@
                             <router-link to="/store/order">我的订单</router-link>
                             <router-link to="/store/center">个人中心</router-link>
                             <router-link to="/store/help">帮助中心</router-link>
-                        </div>
+                        </div> -->
                     </div>
                     <div class="header">
                         <div class="headerLogo">
                             <router-link to="/store/index">
-                                <span>Qsinghua University</span>
+                                <span style="color:#44ae88">燕园草木</span>
                             </router-link>
                         </div>
                         <div class="tabWrap">
@@ -28,14 +28,23 @@
                                 <a-menu-item key="/store/index">
                                     <router-link to="/store/index">首页</router-link>
                                 </a-menu-item>
-                                <a-menu-item key="/store/specials">
-                                    <router-link to="/store/specials">每日特价</router-link>
+                                <a-menu-item key="/store/advanced">
+                                    <router-link to="/store/advanced">高级检索</router-link>
                                 </a-menu-item>
-                                <a-menu-item key="/store/bestSeller">
-                                    <router-link to="/store/bestSeller">畅销榜</router-link>
+                                <a-menu-item key="/store/category">
+                                    <router-link to="/store/category">植物目录浏览</router-link>
                                 </a-menu-item>
-                                <a-menu-item key="/store/dynamic">
-                                    <router-link to="/store/dynamic">动态</router-link>
+                                <a-menu-item key="/store/features">
+                                    <router-link to="/store/features">特征浏览</router-link>
+                                </a-menu-item>
+                                <a-menu-item key="/store/upload">
+                                    <router-link to="/store/upload">图像检索</router-link>
+                                </a-menu-item>
+                                <a-menu-item key="/store/pictures">
+                                    <router-link to="/store/pictures">图片浏览</router-link>
+                                </a-menu-item>
+                                <a-menu-item key="/store/map">
+                                    <router-link to="/store/map">地图</router-link>
                                 </a-menu-item>
                                 <a-menu-item key="/store/contact">
                                     <router-link to="/store/contact">联系我们</router-link>
@@ -53,7 +62,7 @@
                     <app-main></app-main>
                 </a-layout-content>
                 <a-layout-footer class="footer">
-                    版权所有 北京大学数据库小组
+                    版权所有 北京大学信存检小组
                 </a-layout-footer>
             </a-layout>
         </div>
@@ -136,7 +145,7 @@ img {
 .topBar {
     width: 100%;
     height: 40px;
-    background: #564695;
+    background: #44ae88;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -187,7 +196,7 @@ img {
 
 .login-btn {
     margin-right: 2%;
-    color: #564695 !important;
+    color: #44ae88 !important;
 }
 
 .headerLogo {
@@ -211,7 +220,7 @@ img {
 
 .ant-menu-item-selected {
     color: rgb(50, 57, 62) !important;
-    border-bottom: 4px solid #564695 !important;
+    border-bottom: 4px solid #44ae88 !important;
 }
 
 .ant-menu-item-active {
@@ -241,5 +250,8 @@ img {
     color: #484843;
     text-align: center;
     border-top: 1px solid #dcdcdc;
+}
+.register-btn{
+    background-color: #44ae88;
 }
 </style>
